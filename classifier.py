@@ -1,6 +1,14 @@
 import pandas as pd
+import numpy as np
 
-df = pd.read_csv("./ICS_attack_classifier/data/train_test_network.csv", sep=",")
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import accuracy_score
+
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+df = pd.read_csv("./data/train_test_network.csv", sep=",")
 
 features = [
     "src_port",
