@@ -10,13 +10,13 @@ from sklearn.preprocessing import OneHotEncoder
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+from preprocess_functions import *
+
 df = pd.read_csv("./data/train_test_network.csv", sep=",")
 
 features = [
-    "src_port",
     "dst_port",
     "proto",
-    "service",
     "duration"
 ]
 
@@ -41,26 +41,29 @@ X_val, X_test, y_val, y_test = train_test_split(
 
 encoder = OneHotEncoder(handle_unknown="ignore", sparse_output=False)
 
-encoder.fit(X_train[["proto", "service"]])
+categorical_features, numerical_features = identify_features(df, features)
 
-X_train_encoded = encoder.transform(X_train[["proto", "service"]])
-X_val_encoded = encoder.transform(X_val[["proto", "service"]])
-X_test_encoded = encoder.transform(X_test[["proto", "service"]])
+print(categorical_features)
+print(numerical_features)
 
-import numpy as np
+encoder.fit(X_train[categorical_features])
+
+X_train_encoded = encoder.transform(X_train[categorical_features])
+X_val_encoded = encoder.transform(X_val[categorical_features])
+X_test_encoded = encoder.transform(X_test[categorical_features])
 
 X_train_final = np.concatenate([
-    X_train[["src_port", "dst_port", "duration"]].values,
+    X_train[numerical_features].values,
     X_train_encoded
 ], axis=1)
 
 X_val_final = np.concatenate([
-    X_val[["src_port", "dst_port", "duration"]].values,
+    X_val[numerical_features].values,
     X_val_encoded
 ], axis=1)
 
 X_test_final = np.concatenate([
-    X_test[["src_port", "dst_port", "duration"]].values,
+    X_test[numerical_features].values,
     X_test_encoded
 ], axis=1)
 
